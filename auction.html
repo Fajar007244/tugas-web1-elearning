@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Auction</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="assets/styles.css" rel="stylesheet">
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="assets/script.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Car Auction</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="auction.html">Car Auction</a> 
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">Dashboard</a> 
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="search" onkeyup="filterCars()">
+            </form>
+        </div>
+    </nav>
+
+    <!-- Loading Spinner -->
+    <div class="spinner" id="loadingSpinner">
+        <img src="https://i.gifer.com/4V0H.gif" alt="Loading...">
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="filter-section">
+                    <h5><i class="fas fa-filter"></i> Filter Cars</h5>
+                    <form onsubmit="filterCars(); return false;">
+                        <div class="form-group">
+                            <label for="make">Make</label>
+                            <select id="make" class="form-control" onchange="filterCars()">
+                                <option value="all">All</option>
+                                <option value="toyota">Toyota</option>
+                                <option value="ford">Ford</option>
+                                <option value="nissan">Nissan</option>
+                                <option value="honda">Honda</option>
+                                <option value="lexus">Lexus</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Features</label>
+                            <div class="form-check">
+                                <input type="checkbox" id="sunroof" name="features" value="sunroof" class="form-check-input" onchange="filterCars()">
+                                <label class="form-check-label" for="sunroof"><i class="fas fa-sun"></i> Sunroof</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="navigation" name="features" value="navigation" class="form-check-input" onchange="filterCars()">
+                                <label class="form-check-label" for="navigation"><i class="fas fa-map-signs"></i> Navigation</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="bluetooth" name="features" value="bluetooth" class="form-check-input" onchange="filterCars()">
+                                <label class="form-check-label" for="bluetooth"><i class="fas fa-bluetooth"></i> Bluetooth</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Condition</label>
+                            <div class="form-check">
+                                <input type="radio" id="new" name="condition" value="new" class="form-check-input" onchange="filterCars()">
+                                <label class="form-check-label" for="new"><i class="fas fa-car"></i> New</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" id="used" name="condition" value="used" class="form-check-input" onchange="filterCars()">
+                                <label class="form-check-label" for="used"><i class="fas fa-car-crash"></i> Used</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="min-price">Min Price</label>
+                            <input type="number" id="min-price" class="form-control" placeholder="0" onchange="filterCars()">
+                        </div>
+                        <div class="form-group">
+                            <label for="max-price">Max Price</label>
+                            <input type="number" id="max-price" class="form-control" placeholder="Infinity" onchange="filterCars()">
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Year</label>
+                            <select id="year" class="form-control" onchange="filterCars()">
+                                <option value="">All</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sort">Sort By</label>
+                            <select id="sort" class="form-control" onchange="filterCars()">
+                                <option value="default">Default</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="year-asc">Year: Old to New</option>
+                                <option value="year-desc">Year: New to Old</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset Filters</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="auction-list row">
+                    <!-- Car items go here -->
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="toyota" data-features="Sunroof,Navigation" data-condition="used" data-price="25000" data-year="2019" onclick="showDetails(
+                            'assets/image/car1.jpg', 
+                            '2019 Toyota Camry', 
+                            'Used', 
+                            'Sunroof, Navigation', 
+                            '<tr><td>Engine</td><td>2.5L I4</td></tr><tr><td>Transmission</td><td>Automatic</td></tr><tr><td>Mileage</td><td>30,000 miles</td></tr><tr><td>Color</td><td>Black</td></tr>',
+                            '25,000'
+                        )">
+                            <img src="assets/image/car1.jpg" class="card-img-top" alt="Car 1">
+                            <div class="card-body">
+                                <h5 class="card-title">2019 Toyota Camry</h5>
+                                <p class="card-text">Condition: Used</p>
+                                <p class="card-text">Features: <i class="fas fa-sun"></i> Sunroof, <i class="fas fa-map-signs"></i> Navigation</p>
+                                <p class="card-text"><strong>FOB: $25,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car1.jpg', 
+                                    '2019 Toyota Camry', 
+                                    'Used', 
+                                    'Sunroof, Navigation', 
+                                    '<tr><td>Engine</td><td>2.5L I4</td></tr><tr><td>Transmission</td><td>Automatic</td></tr><tr><td>Mileage</td><td>30,000 miles</td></tr><tr><td>Color</td><td>Black</td></tr>',
+                                    '25,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="honda" data-features="Bluetooth" data-condition="new" data-price="30000" data-year="2020" onclick="showDetails(
+                            'assets/image/car2.jpg', 
+                            '2020 Honda Accord', 
+                            'New', 
+                            'Bluetooth', 
+                            '<tr><td>Engine</td><td>1.5L Turbo I4</td></tr><tr><td>Transmission</td><td>CVT</td></tr><tr><td>Mileage</td><td>5,000 miles</td></tr><tr><td>Color</td><td>Black</td></tr>',
+                            '30,000'
+                        )">
+                            <img src="assets/image/car2.jpg" class="card-img-top" alt="Car 2">
+                            <div class="card-body">
+                                <h5 class="card-title">2020 Honda Accord</h5>
+                                <p class="card-text">Condition: New</p>
+                                <p class="card-text">Features: <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $30,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car2.jpg', 
+                                    '2020 Honda Accord', 
+                                    'New', 
+                                    'Bluetooth', 
+                                    '<tr><td>Engine</td><td>1.5L Turbo I4</td></tr><tr><td>Transmission</td><td>CVT</td></tr><tr><td>Mileage</td><td>5,000 miles</td></tr><tr><td>Color</td><td>Black</td></tr>',
+                                    '30,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="ford" data-features="Navigation,Bluetooth" data-condition="used" data-price="35000" data-year="2018" onclick="showDetails(
+                            'assets/image/car3.jpg', 
+                            '2018 Ford Mustang', 
+                            'Used', 
+                            'Navigation, Bluetooth', 
+                            '<tr><td>Engine</td><td>5.0L V8</td></tr><tr><td>Transmission</td><td>Manual</td></tr><tr><td>Mileage</td><td>20,000 miles</td></tr><tr><td>Color</td><td>White</td></tr>',
+                            '35,000'
+                        )">
+                            <img src="assets/image/car3.jpg" class="card-img-top" alt="Car 3">
+                            <div class="card-body">
+                                <h5 class="card-title">2018 Ford Mustang</h5>
+                                <p class="card-text">Condition: Used</p>
+                                <p class="card-text">Features: <i class="fas fa-map-signs"></i> Navigation, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $35,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car3.jpg', 
+                                    '2018 Ford Mustang', 
+                                    'Used', 
+                                    'Navigation, Bluetooth', 
+                                    '<tr><td>Engine</td><td>5.0L V8</td></tr><tr><td>Transmission</td><td>Manual</td></tr><tr><td>Mileage</td><td>20,000 miles</td></tr><tr><td>Color</td><td>White</td></tr>',
+                                    '35,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="toyota" data-features="Navigation,Bluetooth" data-condition="new" data-price="32000" data-year="2021" onclick="showDetails(
+                            'assets/image/car4.jpg', 
+                            '2021 Toyota RAV4', 
+                            'New', 
+                            'Navigation, Bluetooth', 
+                            '<tr><td>Engine</td><td>2.5L I4 Hybrid</td></tr><tr><td>Transmission</td><td>CVT</td></tr><tr><td>Mileage</td><td>1,000 miles</td></tr><tr><td>Color</td><td>Black</td></tr>',
+                            '32,000'
+                        )">
+                            <img src="assets/image/car4.jpg" class="card-img-top" alt="Car 4">
+                            <div class="card-body">
+                                <h5 class="card-title">2021 Toyota RAV4</h5>
+                                <p class="card-text">Condition: New</p>
+                                <p class="card-text">Features: <i class="fas fa-map-signs"></i> Navigation, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $32,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car4.jpg', 
+                                    '2021 Toyota RAV4', 
+                                    'New', 
+                                    'Navigation, Bluetooth', 
+                                    '<tr><td>Engine</td><td>2.5L I4 Hybrid</td></tr><tr><td>Transmission</td><td>CVT</td></tr><tr><td>Mileage</td><td>1,000 miles</td></tr><tr><td>Color</td><td>Black</td></tr>',
+                                    '32,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="honda" data-features="Sunroof,Navigation,Bluetooth" data-condition="used" data-price="22500" data-year="2018" onclick="showDetails(
+                            'assets/image/car5.jpg', 
+                            '2018 Honda CR-V', 
+                            'Used', 
+                            'Sunroof, Navigation, Bluetooth', 
+                            '<tr><td>Engine</td><td>1.5L Turbo I4</td></tr><tr><td>Transmission</td><td>CVT</td></tr><tr><td>Mileage</td><td>45,000 miles</td></tr><tr><td>Color</td><td>White</td></tr>',
+                            '22,500'
+                        )">
+                            <img src="assets/image/car5.jpg" class="card-img-top" alt="Car 5">
+                            <div class="card-body">
+                                <h5 class="card-title">2018 Honda CR-V</h5>
+                                <p class="card-text">Condition: Used</p>
+                                <p class="card-text">Features: <i class="fas fa-sun"></i> Sunroof, <i class="fas fa-map-signs"></i> Navigation, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $22,500</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car5.jpg', 
+                                    '2018 Honda CR-V', 
+                                    'Used', 
+                                    'Sunroof, Navigation, Bluetooth', 
+                                    '<tr><td>Engine</td><td>1.5L Turbo I4</td></tr><tr><td>Transmission</td><td>CVT</td></tr><tr><td>Mileage</td><td>45,000 miles</td></tr><tr><td>Color</td><td>White</td></tr>',
+                                    '22,500'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="ford" data-features="Sunroof,Bluetooth" data-condition="new" data-price="40000" data-year="2022" onclick="showDetails(
+                            'assets/image/car6.jpg', 
+                            '2022 Ford Explorer', 
+                            'New', 
+                            'Sunroof, Bluetooth', 
+                            '<tr><td>Engine</td><td>2.3L EcoBoost I4</td></tr><tr><td>Transmission</td><td>10-speed Automatic</td></tr><tr><td>Mileage</td><td>500 miles</td></tr><tr><td>Color</td><td>Silver</td></tr>',
+                            '40,000'
+                        )">
+                            <img src="assets/image/car6.jpg" class="card-img-top" alt="Car 6">
+                            <div class="card-body">
+                                <h5 class="card-title">2022 Ford Explorer</h5>
+                                <p class="card-text">Condition: New</p>
+                                <p class="card-text">Features: <i class="fas fa-sun"></i> Sunroof, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $40,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car6.jpg', 
+                                    '2022 Ford Explorer', 
+                                    'New', 
+                                    'Sunroof, Bluetooth', 
+                                    '<tr><td>Engine</td><td>2.3L EcoBoost I4</td></tr><tr><td>Transmission</td><td>10-speed Automatic</td></tr><tr><td>Mileage</td><td>500 miles</td></tr><tr><td>Color</td><td>Silver</td></tr>',
+                                    '40,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="nissan" data-features="Navigation,Bluetooth" data-condition="used" data-price="70000" data-year="2009" onclick="showDetails(
+                            'assets/image/car7.jpg', 
+                            '2009 Nissan GT-R R35', 
+                            'Used', 
+                            'Navigation, Bluetooth', 
+                            '<tr><td>Engine</td><td>3.8L Twin-Turbo V6</td></tr><tr><td>Transmission</td><td>6-speed Dual-Clutch</td></tr><tr><td>Mileage</td><td>60,000 miles</td></tr><tr><td>Color</td><td>Red</td></tr>',
+                            '70,000'
+                        )">
+                            <img src="assets/image/car7.jpg" class="card-img-top" alt="Car 7">
+                            <div class="card-body">
+                                <h5 class="card-title">2009 Nissan GT-R R35</h5>
+                                <p class="card-text">Condition: Used</p>
+                                <p class="card-text">Features: <i class="fas fa-map-signs"></i> Navigation, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $70,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car7.jpg', 
+                                    '2009 Nissan GT-R R35', 
+                                    'Used', 
+                                    'Navigation, Bluetooth', 
+                                    '<tr><td>Engine</td><td>3.8L Twin-Turbo V6</td></tr><tr><td>Transmission</td><td>6-speed Dual-Clutch</td></tr><tr><td>Mileage</td><td>60,000 miles</td></tr><tr><td>Color</td><td>Red</td></tr>',
+                                    '70,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="honda" data-features="Navigation,Bluetooth" data-condition="used" data-price="35000" data-year="2018" onclick="showDetails(
+                            'assets/image/car8.jpg', 
+                            '2018 Honda Civic Type R', 
+                            'Used', 
+                            'Navigation, Bluetooth', 
+                            '<tr><td>Engine</td><td>2.0L Turbo I4</td></tr><tr><td>Transmission</td><td>6-speed Manual</td></tr><tr><td>Mileage</td><td>15,000 miles</td></tr><tr><td>Color</td><td>Blue</td></tr>',
+                            '35,000'
+                        )">
+                            <img src="assets/image/car8.jpg" class="card-img-top" alt="Car 8">
+                            <div class="card-body">
+                                <h5 class="card-title">2018 Honda Civic Type R</h5>
+                                <p class="card-text">Condition: Used</p>
+                                <p class="card-text">Features: <i class="fas fa-map-signs"></i> Navigation, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $35,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car8.jpg', 
+                                    '2018 Honda Civic Type R', 
+                                    'Used', 
+                                    'Navigation, Bluetooth', 
+                                    '<tr><td>Engine</td><td>2.0L Turbo I4</td></tr><tr><td>Transmission</td><td>6-speed Manual</td></tr><tr><td>Mileage</td><td>15,000 miles</td></tr><tr><td>Color</td><td>Blue</td></tr>',
+                                    '35,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="auction-item card" data-make="lexus" data-features="Navigation,Bluetooth" data-condition="used" data-price="375000" data-year="2010" onclick="showDetails(
+                            'assets/image/car9.jpg', 
+                            '2010 Lexus LFA', 
+                            'Used', 
+                            'Navigation, Bluetooth', 
+                            '<tr><td>Engine</td><td>4.8L V10</td></tr><tr><td>Transmission</td><td>6-speed Automated Manual</td></tr><tr><td>Mileage</td><td>10,000 miles</td></tr><tr><td>Color</td><td>White</td></tr>',
+                            '375,000'
+                        )">
+                            <img src="assets/image/car9.jpg" class="card-img-top" alt="Car 9">
+                            <div class="card-body">
+                                <h5 class="card-title">2010 Lexus LFA</h5>
+                                <p class="card-text">Condition: Used</p>
+                                <p class="card-text">Features: <i class="fas fa-map-signs"></i> Navigation, <i class="fas fa-bluetooth"></i> Bluetooth</p>
+                                <p class="card-text"><strong>FOB: $375,000</strong></p>
+                                <button class="btn btn-primary" onclick="showDetails(
+                                    'assets/image/car9.jpg', 
+                                    '2010 Lexus LFA', 
+                                    'Used', 
+                                    'Navigation, Bluetooth', 
+                                    '<tr><td>Engine</td><td>4.8L V10</td></tr><tr><td>Transmission</td><td>6-speed Automated Manual</td></tr><tr><td>Mileage</td><td>10,000 miles</td></tr><tr><td>Color</td><td>White</td></tr>',
+                                    '375,000'
+                                )"><i class="fas fa-car"></i> Choose</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Details Modal -->
+    <div class="modal fade" id="carDetailsModal" tabindex="-1" aria-labelledby="carDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="carDetailsModalLabel">Car Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="car-details-modal-body">
+                    <!-- Car details will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Car Auction. All rights reserved. <i class="fas fa-car"></i> Drive Safe!</p>
+    </footer>
+</body>
+</html>
